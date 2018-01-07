@@ -7,7 +7,7 @@ export default Route.extend({
     },
 
     afterModel: function() {
-        if (!this.get('session.user')) {
+        if (!this.get('session.model')) {
             this.transitionTo('users.create');
         } else {
             this.transitionTo('index');
