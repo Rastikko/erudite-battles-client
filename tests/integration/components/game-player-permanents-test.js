@@ -1,7 +1,7 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('user-create-form', 'Integration | Component | user create form', {
+moduleForComponent('game-player-permanents', 'Integration | Component | game player permanents', {
   integration: true
 });
 
@@ -11,9 +11,8 @@ test('it renders', function(assert) {
 
   // Template block usage:
   this.render(hbs`
-    {{#user-create-form}}
-      template block text
-    {{/user-create-form}}
+    {{#game-player-permanents}}
+    {{/game-player-permanents}}
   `);
 
   assert.notEqual(this.$().text().trim().length, 0);

@@ -16,6 +16,7 @@ export default Service.extend({
     },
 
     handleGamePhase: function() {
+        // console.log('handleGamePhase: ', this.get('model'));
         // in between commands i need to give a change to handle animations
         // one phase might have multiple automatic commands
         // one phase might finish automaticallyv c
