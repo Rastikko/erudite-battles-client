@@ -10,9 +10,7 @@ Router.map(function() {
   this.route('users', function() {
     this.route('create');
   });
-  this.route('game', {path: 'game/:id' }, function() {
-    this.route('phase', {path: 'phase/:id'});
-  });
+  this.route('game');
 });
 
 export default Router;

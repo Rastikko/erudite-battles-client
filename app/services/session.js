@@ -27,6 +27,5 @@ export default Service.extend({
         }
         const userObject = objectHandler.fromObjectToEmberObject(user);
         this.set('model', userObject);
-        return userObject;
     }
 });

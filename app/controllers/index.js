@@ -11,7 +11,7 @@ export default Controller.extend({
 
     actions: {
         findGame: function() {
-            this.get('game').findGame(this.get('session.model.id')).then(this._transitionToGame.bind(this));
+            this.get('game').findGame().then(this._transitionToGame.bind(this));
         }
     }
 });
