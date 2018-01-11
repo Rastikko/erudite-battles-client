@@ -21,6 +21,10 @@ export default Service.extend({
         return post('http://localhost:8080/api/v1/users', user).then(this._handleUserObject.bind(this));
     },
 
+    setUserGameId(gameId) {
+        this.set('model.gameId', gameId);
+    },
+
     _handleUserObject(user) {
         if (!user) {
             return;

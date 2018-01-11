@@ -17,13 +17,14 @@ export default Service.extend({
     user: computed.readOnly('session.model'),
 
     enemyPlayer: computed('user.id', 'model.gamePlayers.[]', function() {
-        const userId = this.get('user.id');
+        const userId = parseInt(this.get('user.id'));
         return this.get('model.gamePlayers').find(player => player.get('userId') !== userId);
     }),
 
     heroPlayer: computed('user.id', 'model.gamePlayers', function() {
-        const userId = this.get('user.id');
-        return this.get('model.gamePlayers').findBy('userId', userId);
+        const userId = parseInt(this.get('user.id'));
+        const heroPlayer = this.get('model.gamePlayers').find(player => player.get('userId') === userId);
+        return heroPlayer;
     }),
 
     fetch() {
@@ -48,6 +49,7 @@ export default Service.extend({
 
     _handleGameObject: function(game) {
         const gameObject = objectHandler.fromObjectToEmberObject(game);
+        this.get('session').setUserGameId(game.id);
         this.set('model', gameObject);
     }
 });

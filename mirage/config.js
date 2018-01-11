@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 export default function() {
 
   // These comments are here to help you get started. Feel free to delete them.
@@ -12,16 +14,23 @@ export default function() {
   this.namespace = '/api/v1';    // make this `/api`, for example, if your API is namespaced
   // this.timing = 400;      // delay for each request, automatically set to 0 during testing
 
-  this.get('/users/:id', (schema, request) => {
-      const id = request.params.id;
-      return schema.users.find(id);
-  });
+  this.get('/users/:id');
+  this.get('/games/:id');
 
   this.post('/users', (schema, request) => {
       const name = JSON.parse(request.requestBody).name;
-      const createdUser = schema.users.create({id: 2, name});
-      // TODO: we should not redefine the object
-      return { id: createdUser.id, gameId: null, name: name };
+      return schema.users.create({id: 2, name});
+  });
+
+  this.post('/games/find', (schema, request) => {
+    schema.db.users.update(2, {gameId: 1});
+    return schema.games.find(1);
+  });
+
+  this.post('/games/commands', (schema, request) => {
+    const game = schema.games.find(1);
+    game.attrs.gamePlayers[1].hand.push({name: 'Aitor de Bruin'});
+    schema.db.games.update(game.attrs);
   });
 
   /*

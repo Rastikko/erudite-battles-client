@@ -1,7 +1,8 @@
     import EmberObject from '@ember/object';
+    import { A } from '@ember/array';
 
     function fromArrayToEmberArray(array) {
-        const emberArray = [];
+        const emberArray = A();
         array.forEach(function(item) {
             if (Array.isArray(item)) {
                 emberArray.push(fromArrayToEmberArray(item));

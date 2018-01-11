@@ -5,8 +5,8 @@ import {inject} from '@ember/service';
 export default Controller.extend({
     game: inject(),
 
-    _transitionToGame: function(game) {
-        this.transitionToRoute('game', game);
+    _transitionToGame: function() {
+        this.transitionToRoute('game');
     },
 
     actions: {
