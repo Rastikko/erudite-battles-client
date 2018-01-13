@@ -7,5 +7,9 @@ export default Route.extend({
 
     model: function() {
         return this.get('game').fetch();
+    },
+
+    afterModel: function() {
+        this.get('game').handleGamePhase();
     }
 });

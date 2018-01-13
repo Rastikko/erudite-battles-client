@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+}
+
+body > .ember-view {
+    height: 100%;
+}
+
+.game-player-field {
+    position: relative;
+
+    .game-player-panel {
+        position: absolute;
+        width: 100%;
+        &.hero-player {
+            bottom: 0;
+        }
+        &.enemy-player {
+            top: 0;
+        }
+    }
+
+}

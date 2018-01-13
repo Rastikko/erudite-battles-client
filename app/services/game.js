@@ -7,10 +7,15 @@ import objectHandler from '../helpers/object-handler';
 
 import {inject} from '@ember/service';
 import {computed} from '@ember/object';
+import {on} from '@ember/object/evented';
 
 const GAME_API = 'http://localhost:8080/api/v1/games';
 
 export default Service.extend({
+
+    onInit: on('init', function() {
+        this._handleGameObject = this._handleGameObject.bind(this);
+    }),
 
     session: inject(),
 
@@ -32,12 +37,12 @@ export default Service.extend({
             return Promise.resolve();
         }
         const gameId = this.get('user.gameId');
-        return $.get(`${GAME_API}/${gameId}`).then(this._handleGameObject.bind(this));
+        return $.get(`${GAME_API}/${gameId}`).then(this._handleGameObject);
     },
 
     findGame: function() {
         const userId = this.get('user.id');
-        return post(`${GAME_API}/find`, {userId}).then(this._handleGameObject.bind(this));
+        return post(`${GAME_API}/find`, {userId}).then(this._handleGameObject);
     },
 
     handleGamePhase: function() {
@@ -45,6 +50,9 @@ export default Service.extend({
         // in between commands i need to give a change to handle animations
         // one phase might have multiple automatic commands
         // one phase might finish automaticallyv c
+        Ember.run.later(this, function() {
+            post(`${GAME_API}/commands`).then(this._handleGameObject);
+        }, 2000);
     },
 
     _handleGameObject: function(game) {

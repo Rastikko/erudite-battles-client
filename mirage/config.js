@@ -29,8 +29,10 @@ export default function() {
 
   this.post('/games/commands', (schema, request) => {
     const game = schema.games.find(1);
-    game.attrs.gamePlayers[1].hand.push({name: 'Aitor de Bruin'});
+    const newCard = game.attrs.gamePlayers[1].deck.pop();
+    game.attrs.gamePlayers[1].hand.push(newCard);
     schema.db.games.update(game.attrs);
+    return game;
   });
 
   /*

@@ -1,7 +1,7 @@
 <div class="container h-100">
     <div class="h-25">
-        {{game-player-panel gamePlayer=game.enemyPlayer}}
-        {{game-player-hand hand=game.enemyPlayer.hand}}
+        {{game-player-panel isHeroPlayer=false}}
+        {{game-player-hand isHeroPlayer=false}}
     </div>
 
     <div class="h-25">
@@ -10,8 +10,8 @@
     <div class="h-25">
 
     </div>
-    <div class=" h-25">
-        {{game-player-hand hand=game.heroPlayer.hand}}
-        {{game-player-panel gamePlayer=game.heroPlayer}}
+    <div class="game-player-field h-25">
+        {{game-player-hand isHeroPlayer=true}}
+        {{game-player-panel isHeroPlayer=true}}
     </div>
 </div>
