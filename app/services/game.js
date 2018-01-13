@@ -2,24 +2,41 @@ import $ from 'jquery';
 
 import Service from '@ember/service';
 
-import post from '../helpers/post';
-import objectHandler from '../helpers/object-handler';
-
 import {inject} from '@ember/service';
 import {computed} from '@ember/object';
-import {on} from '@ember/object/evented';
+import {once} from '@ember/runloop';
+
+import post from './utils/post';
+import objectHandler from './utils/object-handler';
 
 const GAME_API = 'http://localhost:8080/api/v1/games';
 
 export default Service.extend({
 
-    onInit: on('init', function() {
-        this._handleGameObject = this._handleGameObject.bind(this);
-    }),
+    init() {
+        this._super(...arguments);
+        this.queuedCommands = [];
+        this._defineGameModel = this._defineGameModel.bind(this);
+    },
 
     session: inject(),
 
     user: computed.readOnly('session.model'),
+
+    handledGamePhaseId: -1,
+
+    gamePhaseCommandsRemaining: computed.gt('queuedCommands.length', 0),
+
+    isGamePhaseHandled: computed('handledGamePhase', 'model.gamePhase.id', function() {
+        return this.get('handledGamePhase') !== this.get('model.gamePhase.id');
+    }),
+
+    endPhaseReady: computed('handledGamePhase', 'model.gamePhase.id', 'queuedCommands.[]', function() {
+        if (this.get('isGamePhaseHandled') || !this.get('gamePhaseCommandsRemaining')) {
+            return false;
+        }
+        return true;
+    }),
 
     enemyPlayer: computed('user.id', 'model.gamePlayers.[]', function() {
         const userId = parseInt(this.get('user.id'));
@@ -37,27 +54,44 @@ export default Service.extend({
             return Promise.resolve();
         }
         const gameId = this.get('user.gameId');
-        return $.get(`${GAME_API}/${gameId}`).then(this._handleGameObject);
+        return $.get(`${GAME_API}/${gameId}`).then(this._defineGameModel);
     },
 
     findGame: function() {
         const userId = this.get('user.id');
-        return post(`${GAME_API}/find`, {userId}).then(this._handleGameObject);
+        return post(`${GAME_API}/find`, {userId}).then(this._defineGameModel);
     },
 
-    handleGamePhase: function() {
-        // console.log('handleGamePhase: ', this.get('model'));
-        // in between commands i need to give a change to handle animations
-        // one phase might have multiple automatic commands
-        // one phase might finish automaticallyv c
-        Ember.run.later(this, function() {
-            post(`${GAME_API}/commands`).then(this._handleGameObject);
-        }, 2000);
+    _handleNextCommand() {
+        if (this.get('gamePhaseCommandsRemaining')) {
+            const nextCommand = this.get('queuedCommands').shiftObject();
+            debugger;
+            post(`${GAME_API}/commands`, nextCommand).then(gameData => {
+                this._defineGameModel(gameData);
+                this._handleNextCommand();
+            })
+        }
     },
 
-    _handleGameObject: function(game) {
+    _handleGamePhase() {
+        if (this.get('handledGamePhase') === this.get('model.gamePhase.id')) {
+            return;
+        }
+
+        if (this.get('model.gamePhase.gamePhaseType') === 'PHASE_GATHER') {
+            this.get('queuedCommands').pushObject({gameCommandType: 'COMMAND_DRAW', payload: '5', userId: this.get('session.model.id')});
+            this.get('queuedCommands').pushObject({gameCommandType: 'COMMAND_HARVEST', payload: '', userId: this.get('session.model.id')});
+            this.set('handledGamePhase', this.get('model.gamePhase.id'));
+            debugger;
+            this._handleNextCommand();
+        }
+
+    },
+
+    _defineGameModel: function(game) {
         const gameObject = objectHandler.fromObjectToEmberObject(game);
         this.get('session').setUserGameId(game.id);
         this.set('model', gameObject);
+        this._handleGamePhase();
     }
 });

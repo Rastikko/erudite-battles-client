@@ -12,11 +12,18 @@ body > .ember-view {
     .game-player-panel {
         position: absolute;
         width: 100%;
+        z-index: 2;
         &.hero-player {
             bottom: 0;
         }
         &.enemy-player {
             top: 0;
+        }
+    }
+
+    .game-player-hand-card {
+        &:hover {
+            z-index: 2;
         }
     }
 

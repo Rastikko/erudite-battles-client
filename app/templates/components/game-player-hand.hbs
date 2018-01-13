@@ -1,3 +1,5 @@
-{{#each hand as |card|}}
-    card: {{card.name}}<br/>
+{{#each gamePlayer.hand as |card|}}
+    <div class="col h-100">
+        {{game-player-hand-card card=card}}
+    </div>
 {{/each}}

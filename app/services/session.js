@@ -1,9 +1,9 @@
 import $ from 'jquery';
 
 import Service from '@ember/service';
-import objectHandler from '../helpers/object-handler';
 
-import post from '../helpers/post';
+import post from './utils/post';
+import objectHandler from './utils/object-handler';
 
 const URL = 'http://localhost:8080/api/v1/users/2';
 
