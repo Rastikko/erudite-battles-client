@@ -4,7 +4,6 @@ import Service from '@ember/service';
 
 import {inject} from '@ember/service';
 import {computed} from '@ember/object';
-import {once} from '@ember/runloop';
 
 import post from './utils/post';
 import objectHandler from './utils/object-handler';
@@ -32,7 +31,7 @@ export default Service.extend({
     }),
 
     endPhaseReady: computed('handledGamePhase', 'model.gamePhase.id', 'queuedCommands.[]', function() {
-        if (this.get('isGamePhaseHandled') || !this.get('gamePhaseCommandsRemaining')) {
+        if (this.get('isGamePhaseHandled') || this.get('gamePhaseCommandsRemaining')) {
             return false;
         }
         return true;
@@ -64,9 +63,9 @@ export default Service.extend({
 
     _handleNextCommand() {
         if (this.get('gamePhaseCommandsRemaining')) {
-            const nextCommand = this.get('queuedCommands').shiftObject();
-            debugger;
+            const nextCommand = this.get('queuedCommands.0');
             post(`${GAME_API}/commands`, nextCommand).then(gameData => {
+                this.get('queuedCommands').shiftObject();
                 this._defineGameModel(gameData);
                 this._handleNextCommand();
             })
@@ -82,7 +81,6 @@ export default Service.extend({
             this.get('queuedCommands').pushObject({gameCommandType: 'COMMAND_DRAW', payload: '5', userId: this.get('session.model.id')});
             this.get('queuedCommands').pushObject({gameCommandType: 'COMMAND_HARVEST', payload: '', userId: this.get('session.model.id')});
             this.set('handledGamePhase', this.get('model.gamePhase.id'));
-            debugger;
             this._handleNextCommand();
         }
 
@@ -91,7 +89,11 @@ export default Service.extend({
     _defineGameModel: function(game) {
         const gameObject = objectHandler.fromObjectToEmberObject(game);
         this.get('session').setUserGameId(game.id);
-        this.set('model', gameObject);
+        if (!this.get('model')) {
+            this.set('model', gameObject);
+        } else {
+            objectHandler.updateEmberObjectFromObject(this.get('model'), game);
+        }
         this._handleGamePhase();
     }
 });

@@ -1,6 +1,10 @@
 import { moduleFor, test } from 'ember-qunit';
 import EmberObject from '@ember/object';
 
+import games from '../../../mirage/fixtures/games';
+import objectHandler from '../../../services/utils/object-handler';
+
+
 moduleFor('service:game', 'Unit | Service | game', {
   // Specify the other units that are required for this test.
   needs: ['service:session']
@@ -30,3 +34,13 @@ test('_handleGamePhase', function(assert) {
     assert.equal(service.get('queuedCommands.1.payload'), '');
     assert.equal(service.get('handledGamePhase'), 1);
 })
+
+test('objectHandler', function(assert) {
+  const gameObject = objectHandler.fromObjectToEmberObject(games[0]);
+  assert.equal(gameObject.get('id'), 1);
+
+  const card = games[0].gamePlayers[1].deck.pop();
+  games[0].gamePlayers[1].hand.push(card);
+
+  objectHandler.updateEmberObjectFromObject(gameObject, games[0]);
+});

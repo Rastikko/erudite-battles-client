@@ -15,11 +15,11 @@ function fromArrayToEmberArray(array) {
     return emberArray;
 }
 
-function fromObjectToEmberObject(pojo) {
+function fromObjectToEmberObject(object) {
     const emberObject = EmberObject.create();
 
-    for (const key in pojo) {
-        const keyObject = pojo[key];
+    for (const key in object) {
+        const keyObject = object[key];
          if (Array.isArray(keyObject)) {
             emberObject.set(key, fromArrayToEmberArray(keyObject))
         } else if (keyObject && typeof keyObject === 'object') {
@@ -32,4 +32,42 @@ function fromObjectToEmberObject(pojo) {
     return emberObject;
 }
 
-export default {fromObjectToEmberObject};
+function updateEmberArrrayFromArray(emberArray, array) {
+    array.forEach(function(object) {
+        const emberObject = emberArray.findBy('id', object.id);
+        if(emberObject) {
+            updateEmberObjectFromObject(emberObject, object);
+        } else {
+            emberArray.pushObject(fromObjectToEmberObject(object));
+        }
+    });
+
+    emberArray.forEach(function(emberObject) {
+        const object = array.find(item => item.id === emberObject.get('id'))
+        if (!object) {
+            emberArray.removeObject(emberObject);
+        }
+    })
+}
+
+function updateEmberObjectFromObject(emberObject, object) {
+    for (const key in object) {
+
+        const keyObject = object[key];
+        const keyEmberObject = emberObject.get(key);
+
+        if (Array.isArray(keyObject) && Array.isArray(keyEmberObject)) {
+            updateEmberArrrayFromArray(keyEmberObject, keyObject)
+        } else if (Array.isArray(keyObject)) {
+            emberObject.set(key, fromArrayToEmberArray(keyObject));
+        } else if (keyObject && typeof keyObject === 'object' && keyEmberObject && typeof keyEmberObject === 'object') {
+            updateEmberObjectFromObject(emberObject.get(key), keyObject);
+        } else if (keyObject && typeof keyObject === 'object') {
+            keyEmberObject.set(key, fromObjectToEmberObject(keyObject));
+        } else if(keyObject !== keyEmberObject) {
+            emberObject.set(key, keyObject);
+        }
+    }
+}
+
+export default {fromObjectToEmberObject, updateEmberObjectFromObject};
