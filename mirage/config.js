@@ -1,5 +1,67 @@
 /* eslint-disable no-unused-vars */
 
+function handleCommandEnd(game) {
+    const gamePhaseType = game.attrs.gamePhase.type;
+
+    if (gamePhaseType === 'PHASE_GATHER') {
+        const gamePhase = {
+          id: game.gamePhase.id + 1,
+          type: "PHASE_PLAN"
+        }
+        game.attrs.gamePhase = gamePhase;
+        return;
+    }
+
+    if (gamePhaseType === 'PHASE_PLAN') {
+        const gamePhase = {
+          id: game.gamePhase.id + 1,
+          type: "PHASE_BATTLE_PREPARATION"
+        }
+        game.attrs.gamePhase = gamePhase;
+        return;
+    }
+
+    if (gamePhaseType === 'PHASE_BATTLE_PREPARATION') {
+        const gamePhase = {
+          id: game.gamePhase.id + 1,
+          type: "PHASE_BATTLE"
+        }
+        game.attrs.gamePhase = gamePhase;
+        return;
+    }
+
+    if (gamePhaseType === 'PHASE_BATTLE' && game.attrs.gamePlayers[0].health === 100) {
+        const gamePhase = {
+          id: game.gamePhase.id + 1,
+          type: "PHASE_OUTCOME"
+        }
+        game.attrs.gamePlayers[0].health = 0;
+        game.attrs.gamePlayers[1].health = 100;
+        game.attrs.gamePhase = gamePhase;
+        return;
+    }
+
+    if (gamePhaseType === 'PHASE_BATTLE') {
+        const gamePhase = {
+          id: game.gamePhase.id + 1,
+          type: "PHASE_BATTLE_RESOLUTION"
+        }
+        game.attrs.gamePlayers[0].health = 100;
+        game.attrs.gamePlayers[1].health = 150;
+        game.attrs.gamePhase = gamePhase;
+        return;
+    }
+
+    if (gamePhaseType === 'PHASE_BATTLE_RESOLUTION') {
+        const gamePhase = {
+          id: game.gamePhase.id + 1,
+          type: "PHASE_GATHER"
+        }
+        game.attrs.gamePhase = gamePhase;
+        return;
+    }
+}
+
 export default function() {
 
   // These comments are here to help you get started. Feel free to delete them.
@@ -28,9 +90,25 @@ export default function() {
   });
 
   this.post('/games/commands', (schema, request) => {
+    const gameCommandType = JSON.parse(request.requestBody).type;
     const game = schema.games.find(1);
-    const newCard = game.attrs.gamePlayers[1].deck.pop();
-    game.attrs.gamePlayers[1].hand.push(newCard);
+    const gamePhaseType = game.attrs.gamePhase.type;
+
+    if (gameCommandType === 'COMMAND_DRAW') {
+        for (let i = 0; i < 2; i++) {
+            const newCard = game.attrs.gamePlayers[0].hand[i];
+            game.attrs.gamePlayers[1].hand.push(newCard);
+        }
+    }
+
+    if (gameCommandType === 'COMMAND_HARVEST') {
+        game.attrs.gamePlayers[1].energy++;
+    }
+
+    if (gameCommandType === 'COMMAND_END') {
+        handleCommandEnd(game);
+    }
+
     schema.db.games.update(game.attrs);
     return game;
   });

@@ -19,7 +19,7 @@ test('it exists', function(assert) {
 test('_handleGamePhase', function(assert) {
     let service = this.subject();
     const sessionModel = EmberObject.create({id: 1});
-    const gamePhase = EmberObject.create({gamePhaseType: 'PHASE_GATHER', id: 1});
+    const gamePhase = EmberObject.create({type: 'PHASE_GATHER', id: 1});
     const gameModel = EmberObject.create({gamePhase: gamePhase});
     service.set('session.model', sessionModel);
     service.set('model', gameModel);

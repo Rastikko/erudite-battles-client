@@ -16,9 +16,12 @@ export default Service.extend({
         this._super(...arguments);
         this.queuedCommands = [];
         this._defineGameModel = this._defineGameModel.bind(this);
+        this._handleNextCommand = this._handleNextCommand.bind(this);
+        this.get('animator').on('animationsEnded', this._handleNextCommand);
     },
 
     session: inject(),
+    animator: inject(),
 
     user: computed.readOnly('session.model'),
 
@@ -27,11 +30,11 @@ export default Service.extend({
     gamePhaseCommandsRemaining: computed.gt('queuedCommands.length', 0),
 
     isGamePhaseHandled: computed('handledGamePhase', 'model.gamePhase.id', function() {
-        return this.get('handledGamePhase') !== this.get('model.gamePhase.id');
+        return this.get('handledGamePhase') === this.get('model.gamePhase.id');
     }),
 
-    endPhaseReady: computed('handledGamePhase', 'model.gamePhase.id', 'queuedCommands.[]', function() {
-        if (this.get('isGamePhaseHandled') || this.get('gamePhaseCommandsRemaining')) {
+    endPhaseReady: computed('isGamePhaseHandled', 'gamePhaseCommandsRemaining', function() {
+        if (!this.get('isGamePhaseHandled') || this.get('gamePhaseCommandsRemaining')) {
             return false;
         }
         return true;
@@ -61,8 +64,32 @@ export default Service.extend({
         return post(`${GAME_API}/find`, {userId}).then(this._defineGameModel);
     },
 
+    endPhase: function() {
+        this.get('queuedCommands').pushObject({type: 'COMMAND_END', payload: '', userId: this.get('session.model.id')});
+        this._handleNextCommand();
+    },
+
+    _handleGamePhase() {
+        if (this.get('isGamePhaseHandled')) {
+            return;
+        }
+
+        if (this.get('model.gamePhase.type') === 'PHASE_GATHER') {
+            this.get('queuedCommands').pushObject({type: 'COMMAND_DRAW', payload: '5', userId: this.get('session.model.id')});
+            this.get('queuedCommands').pushObject({type: 'COMMAND_HARVEST', payload: '', userId: this.get('session.model.id')});
+            this.get('queuedCommands').pushObject({type: 'COMMAND_END', payload: '', userId: this.get('session.model.id')});
+            this._handleNextCommand();
+        }
+
+        if (this.get('model.gamePhase.type') === 'PHASE_OUTCOME') {
+            alert('GAME OVER');
+        }
+
+        this.set('handledGamePhase', this.get('model.gamePhase.id'));
+    },
+
     _handleNextCommand() {
-        if (this.get('gamePhaseCommandsRemaining')) {
+        if (this.get('gamePhaseCommandsRemaining') && !this.get('animator.isAnimating')) {
             const nextCommand = this.get('queuedCommands.0');
             post(`${GAME_API}/commands`, nextCommand).then(gameData => {
                 this.get('queuedCommands').shiftObject();
@@ -70,20 +97,6 @@ export default Service.extend({
                 this._handleNextCommand();
             })
         }
-    },
-
-    _handleGamePhase() {
-        if (this.get('handledGamePhase') === this.get('model.gamePhase.id')) {
-            return;
-        }
-
-        if (this.get('model.gamePhase.gamePhaseType') === 'PHASE_GATHER') {
-            this.get('queuedCommands').pushObject({gameCommandType: 'COMMAND_DRAW', payload: '5', userId: this.get('session.model.id')});
-            this.get('queuedCommands').pushObject({gameCommandType: 'COMMAND_HARVEST', payload: '', userId: this.get('session.model.id')});
-            this.set('handledGamePhase', this.get('model.gamePhase.id'));
-            this._handleNextCommand();
-        }
-
     },
 
     _defineGameModel: function(game) {

@@ -1,18 +1,14 @@
-<div class="container h-100">
-    <div class="game-player-field h-25">
+<div class="container game-container">
+    {{game-panel}}
+    <div class="game-player-field enemy-field">
         {{game-player-panel isHeroPlayer=false}}
         {{game-player-hand isHeroPlayer=false}}
     </div>
 
-    <div class="h-25">
-    </div>
+    {{game-player-permanents isHeroPlayer=false}}
+    {{game-player-permanents isHeroPlayer=true}}
 
-    <div class="h-25">
-        {{#if game.endPhaseReady}}
-            READY
-        {{/if}}
-    </div>
-    <div class="game-player-field h-25">
+    <div class="game-player-field hero-field">
         {{game-player-hand isHeroPlayer=true}}
         {{game-player-panel isHeroPlayer=true}}
     </div>
