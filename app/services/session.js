@@ -1,24 +1,26 @@
-import $ from 'jquery';
-
 import Service from '@ember/service';
+import {inject} from '@ember/service';
 
-import post from './utils/post';
-import objectHandler from './utils/object-handler';
-
-const URL = 'http://localhost:8080/api/v1/users/2';
+const USER_ID = 2;
 
 export default Service.extend({
     user: null,
 
+    store: inject(),
+
+    init() {
+        this._super(...arguments);
+        this._handleUserObject = this._handleUserObject.bind(this);
+        this.fetch = this.fetch.bind(this);
+    },
+
     fetch: function() {
-        if (this.get('model')) {
-            return Promise.resolve();
-        }
-        return $.get(URL).then(this._handleUserObject.bind(this));
+        return this.get('store').findRecord('user', USER_ID).then(this._handleUserObject).catch(() => {});
     },
 
     createUser: function(user) {
-        return post('http://localhost:8080/api/v1/users', user).then(this._handleUserObject.bind(this));
+        const userModel = this.get('store').createRecord('user', user);
+        return userModel.save().then(this.fetch);
     },
 
     setUserGameId(gameId) {
@@ -26,10 +28,6 @@ export default Service.extend({
     },
 
     _handleUserObject(user) {
-        if (!user) {
-            return;
-        }
-        const userObject = objectHandler.fromObjectToEmberObject(user);
-        this.set('model', userObject);
+        this.set('model', user);
     }
 });
