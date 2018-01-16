@@ -1,12 +1,9 @@
-import $ from 'jquery';
-
 import Service from '@ember/service';
 
 import {inject} from '@ember/service';
 import {computed} from '@ember/object';
 
 import post from './utils/post';
-import objectHandler from './utils/object-handler';
 
 const GAME_API = 'http://localhost:8080/api/v1/games';
 
@@ -15,11 +12,15 @@ export default Service.extend({
     init() {
         this._super(...arguments);
         this.queuedCommands = [];
+
+        this.fetch = this.fetch.bind(this);
         this._defineGameModel = this._defineGameModel.bind(this);
         this._handleNextCommand = this._handleNextCommand.bind(this);
+
         this.get('animator').on('animationsEnded', this._handleNextCommand);
     },
 
+    store: inject(),
     session: inject(),
     animator: inject(),
 
@@ -52,16 +53,14 @@ export default Service.extend({
     }),
 
     fetch() {
-        if (this.get('model')) {
-            return Promise.resolve();
-        }
         const gameId = this.get('user.gameId');
-        return $.get(`${GAME_API}/${gameId}`).then(this._defineGameModel);
+        return this.get('store').findRecord('game', gameId, {reload: true}).then(this._defineGameModel);
+        // return $.get(`${GAME_API}/${gameId}`).then(this._defineGameModel);
     },
 
     findGame: function() {
         const userId = this.get('user.id');
-        return post(`${GAME_API}/find`, {userId}).then(this._defineGameModel);
+        return post(`${GAME_API}/find`, {userId}).then(this.get('session').fetch);
     },
 
     endPhase: function() {
@@ -91,21 +90,19 @@ export default Service.extend({
     _handleNextCommand() {
         if (this.get('gamePhaseCommandsRemaining') && !this.get('animator.isAnimating')) {
             const nextCommand = this.get('queuedCommands.0');
-            post(`${GAME_API}/commands`, nextCommand).then(gameData => {
+            post(`${GAME_API}/commands`, nextCommand)
+            .then(() => {
                 this.get('queuedCommands').shiftObject();
-                this._defineGameModel(gameData);
-                this._handleNextCommand();
             })
+            .then(this.fetch)
+            .then(this._handleNextCommand)
         }
     },
 
     _defineGameModel: function(game) {
-        const gameObject = objectHandler.fromObjectToEmberObject(game);
-        this.get('session').setUserGameId(game.id);
+        // const gameObject = objectHandler.fromObjectToEmberObject(game);
         if (!this.get('model')) {
-            this.set('model', gameObject);
-        } else {
-            objectHandler.updateEmberObjectFromObject(this.get('model'), game);
+            this.set('model', game);
         }
         this._handleGamePhase();
     }

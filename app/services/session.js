@@ -15,7 +15,7 @@ export default Service.extend({
     },
 
     fetch: function() {
-        return this.get('store').findRecord('user', USER_ID).then(this._handleUserObject).catch(() => {});
+        return this.get('store').findRecord('user', USER_ID, {reload: true}).then(this._handleUserObject).catch(() => {});
     },
 
     createUser: function(user) {
@@ -28,6 +28,9 @@ export default Service.extend({
     },
 
     _handleUserObject(user) {
+        if (this.get('model')) {
+            return;
+        }
         this.set('model', user);
     }
 });

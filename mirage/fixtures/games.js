@@ -9,9 +9,7 @@ export default [
           "energy": 0,
           "attack": 50,
           "health": 200,
-          "deck": {
-              size: 25
-          },
+          "deck": 25,
           "hand": [
             {
               "id": 26,
