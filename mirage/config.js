@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-function handleCommandEnd(game) {
+function handleCommandEnd(schema, request, game) {
     const gamePhaseType = game.attrs.gamePhase.type;
 
     if (gamePhaseType === 'PHASE_GATHER') {
@@ -26,6 +26,9 @@ function handleCommandEnd(game) {
           id: game.gamePhase.id + 1,
           type: "PHASE_BATTLE"
         }
+        game.attrs.gamePlayers[0].currentGameQuestion = schema.gameQuestions.find(1);
+        game.attrs.gamePlayers[1].currentGameQuestion = schema.gameQuestions.find(2);
+
         game.attrs.gamePhase = gamePhase;
         return;
     }
@@ -106,7 +109,7 @@ export default function() {
     }
 
     if (gameCommandType === 'COMMAND_END') {
-        handleCommandEnd(game);
+        handleCommandEnd(schema, request, game);
     }
 
     schema.db.games.update(game.attrs);

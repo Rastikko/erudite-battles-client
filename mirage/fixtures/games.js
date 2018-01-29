@@ -12,7 +12,7 @@ export default [
           "deck": 25,
           "hand": [
             {
-              "id": 26,
+              "id": 1,
               "name": "Pythagoras Theorem",
               "cost": 1,
               "attributes": [
@@ -24,7 +24,7 @@ export default [
               ]
             },
             {
-              "id": 27,
+              "id": 2,
               "name": "Pythagoras Theorem",
               "cost": 1,
               "attributes": [

@@ -7,6 +7,5 @@ export default DS.Model.extend({
     health: DS.attr('number'),
     deck: DS.attr('number'),
     hand: DS.hasMany('gameCard', { async: false }),
-    // deck: DS.hasMany('gameCard'),
-    // permanents: DS.hasMany('gameCard')
+    currentGameQuestion: DS.belongsTo('gameQuestion', { async: false })
 });

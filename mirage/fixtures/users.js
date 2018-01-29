@@ -4,9 +4,9 @@ export default [
       "gameId": 1,
       "name": "Bot"
     },
-    // {
-    //   "id": 2,
-    //   "gameId": 1,
-    //   "name": "Johan"
-    // }
+    {
+      "id": 2,
+      "gameId": 1,
+      "name": "Johan"
+    }
 ]

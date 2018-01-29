@@ -1,5 +1,5 @@
 <div class="col">QUESTIONS INFOR</div>
-<div class="col">{{game.endPhaseReady}}</div>
+<div class="col">{{game.model.gamePhase.type}}: {{game.endPhaseReady}}</div>
 <div class="col game-panel-action-col">
     <button type="button" class="btn btn-primary btn-lg" disabled={{endDisabled}} {{action 'endPhase'}}>END</button>
 </div>
