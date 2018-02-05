@@ -89,13 +89,10 @@ export default Service.extend({
 
     _handleNextCommand() {
         if (this.get('gamePhaseCommandsRemaining') && !this.get('animator.isAnimating')) {
-            const nextCommand = this.get('queuedCommands.0');
+            const nextCommand = this.get('queuedCommands').shiftObject();
             post(`${GAME_API}/commands`, nextCommand)
-            .then(() => {
-                this.get('queuedCommands').shiftObject();
-            })
-            .then(this.fetch)
-            .then(this._handleNextCommand)
+                .then(this.fetch)
+                .then(this._handleNextCommand)
         }
     },
 

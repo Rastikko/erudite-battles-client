@@ -3,4 +3,4 @@
 Tasks:
 
  - Implement modal to display battle phases.
- - Use http://mathjs.org/docs/expressions/algebra.html to interpretate math questions
+ - Use http://mathjs.org/docs/expressions/algebra.html for math questions
