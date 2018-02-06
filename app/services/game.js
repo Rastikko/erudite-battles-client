@@ -24,9 +24,9 @@ export default Service.extend({
     session: inject(),
     animator: inject(),
 
-    user: computed.readOnly('session.model'),
-
     handledGamePhaseId: -1,
+
+    user: computed.readOnly('session.model'),
 
     gamePhaseCommandsRemaining: computed.gt('queuedCommands.length', 0),
 
@@ -39,17 +39,6 @@ export default Service.extend({
             return false;
         }
         return true;
-    }),
-
-    enemyPlayer: computed('user.id', 'model.gamePlayers.[]', function() {
-        const userId = parseInt(this.get('user.id'));
-        return this.get('model.gamePlayers').find(player => player.get('userId') !== userId);
-    }),
-
-    heroPlayer: computed('user.id', 'model.gamePlayers', function() {
-        const userId = parseInt(this.get('user.id'));
-        const heroPlayer = this.get('model.gamePlayers').find(player => player.get('userId') === userId);
-        return heroPlayer;
     }),
 
     fetch() {

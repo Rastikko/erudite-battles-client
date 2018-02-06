@@ -1,4 +1,4 @@
-import { moduleFor, test } from 'ember-qunit';
+import { moduleFor, test, skip } from 'ember-qunit';
 import EmberObject from '@ember/object';
 
 moduleFor('service:game', 'Unit | Service | game', {
@@ -12,7 +12,7 @@ test('it exists', function(assert) {
   assert.ok(service);
 });
 
-test('_handleGamePhase', function(assert) {
+skip('_handleGamePhase', function(assert) {
     let service = this.subject();
     const sessionModel = EmberObject.create({id: 1});
     const gamePhase = EmberObject.create({type: 'PHASE_GATHER', id: 1});

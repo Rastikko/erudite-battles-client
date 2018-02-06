@@ -10,8 +10,8 @@ export default Component.extend({
 
     gamePlayer: computed('isHeroPlayer', 'game.{heroPlayer,enemyPlayer}', function() {
         if (this.get('isHeroPlayer')) {
-            return this.get('game.heroPlayer');
+            return this.get('game.model.heroPlayer');
         }
-        return this.get('game.enemyPlayer');
+        return this.get('game.model.enemyPlayer');
     })
 });
