@@ -44,9 +44,7 @@ export default [
           "energy": 0,
           "attack": 100,
           "health": 200,
-          "deck": {
-              size: 30
-          },
+          "deck": 30,
           "hand": [],
           "permanents": []
         }
