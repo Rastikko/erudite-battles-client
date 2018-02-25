@@ -9,4 +9,5 @@ export default function(server) {
   server.loadFixtures('users');
   server.loadFixtures('games');
   server.loadFixtures('gameQuestions');
+  server.create('user');
 }

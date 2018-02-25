@@ -1,3 +1,10 @@
 <div class="container">
-    {{user-create-form userCreated=(action 'userCreated')}}
+    <div class="row">
+        <div class="col">
+            {{user-login-form userCreated=(action 'userCreated')}}
+        </div>
+        <div class="col">
+            {{user-create-form userCreated=(action 'userCreated')}}
+        </div>
+    </div>
 </div>

@@ -1,10 +1,13 @@
 import Service from '@ember/service';
 import {inject} from '@ember/service';
 
-const USER_ID = 2;
+import post from './utils/post';
+
+const LOGIN_API = 'http://localhost:8080/api/v1/users/login';
 
 export default Service.extend({
     user: null,
+    loginError: false,
 
     store: inject(),
 
@@ -15,12 +18,17 @@ export default Service.extend({
     },
 
     fetch: function() {
-        return this.get('store').findRecord('user', USER_ID, {reload: true}).then(this._handleUserObject).catch(() => {});
+        // TODO: implement some sort of cookie base authentication
+        // return this.get('store').findRecord('user', USER_ID, {reload: true}).then(this._handleUserObject).catch(() => {});
     },
 
     createUser: function(user) {
         const userModel = this.get('store').createRecord('user', user);
         return userModel.save().then(this.fetch);
+    },
+
+    login: function(data) {
+        return post(LOGIN_API, data).then(this._handleUserObject);
     },
 
     setUserGameId(gameId) {

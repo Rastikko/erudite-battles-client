@@ -1,0 +1,9 @@
+<h2>Login</h2>
+{{#if error}}
+    <div class="alert alert-danger" role="alert">
+      User not found.
+    </div>
+{{/if}}
+<label for="inputLoginUsername" class="sr-only">Username</label>
+{{input value=userName id="inputLoginUsername" class="login-input form-control" placeholder="Username" required=true autofocus=true}}
+<button class="login-btn btn btn-lg btn-primary btn-block" type="submit" {{action 'login' userName}}>Login</button>

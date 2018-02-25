@@ -17,7 +17,6 @@ export default Factory.extend({
           averageAnswerTime: 20
         }
     },
-
     isCorrect: trait({
         endDate: 1000000000001,
         selectedAnswer: "1",
