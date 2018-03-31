@@ -42,9 +42,12 @@ export default Service.extend({
     }),
 
     fetch() {
-        const gameId = this.get('user.gameId');
-        return this.get('store').findRecord('game', gameId, {reload: true}).then(this._defineGameModel);
-        // return $.get(`${GAME_API}/${gameId}`).then(this._defineGameModel);
+        let gameId = this.get('user.gameId');
+        const sessionPromise = gameId ? Promise.resolve() : this.get('session').fetch();
+        sessionPromise.then(() => {
+            gameId = this.get('user.gameId');
+            return this.get('store').findRecord('game', gameId, {reload: true}).then(this._defineGameModel);
+        });
     },
 
     findGame: function() {

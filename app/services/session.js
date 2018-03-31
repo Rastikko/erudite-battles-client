@@ -18,13 +18,16 @@ export default Service.extend({
     },
 
     fetch: function() {
+        if (!this.get('model.id')) {
+          return Promise.resolve();
+        }
         // TODO: implement some sort of cookie base authentication
-        // return this.get('store').findRecord('user', USER_ID, {reload: true}).then(this._handleUserObject).catch(() => {});
+        return this.get('store').findRecord('user', this.get('model.id'), {reload: true}).then(this._handleUserObject).catch(() => {});
     },
 
     createUser: function(user) {
         const userModel = this.get('store').createRecord('user', user);
-        return userModel.save().then(this.fetch);
+        return userModel.save().then(this._handleUserObject);
     },
 
     login: function(data) {
@@ -36,9 +39,6 @@ export default Service.extend({
     },
 
     _handleUserObject(user) {
-        if (this.get('model')) {
-            return;
-        }
         this.set('model', user);
     }
 });
