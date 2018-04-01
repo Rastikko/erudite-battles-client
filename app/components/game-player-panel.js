@@ -11,7 +11,7 @@ export default Component.extend({
 
     game: inject(),
 
-    gamePlayer: computed('isHeroPlayer', 'game.{heroPlayer,enemyPlayer}', function() {
+    gamePlayer: computed('isHeroPlayer', 'game.model.{heroPlayer,enemyPlayer}', function() {
         if (this.get('isHeroPlayer')) {
             return this.get('game.model.heroPlayer');
         }

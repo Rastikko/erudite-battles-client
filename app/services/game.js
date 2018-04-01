@@ -89,7 +89,6 @@ export default Service.extend({
     },
 
     _defineGameModel: function(game) {
-        // const gameObject = objectHandler.fromObjectToEmberObject(game);
         if (!this.get('model')) {
             this.set('model', game);
         }

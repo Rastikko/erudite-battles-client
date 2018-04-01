@@ -8,7 +8,7 @@ export default Component.extend({
 
     classNames: ['game-player-hand', 'row', 'h-100'],
 
-    gamePlayer: computed('isHeroPlayer', 'game.{heroPlayer,enemyPlayer}', function() {
+    gamePlayer: computed('isHeroPlayer', 'game.model.{heroPlayer,enemyPlayer}', function() {
         if (this.get('isHeroPlayer')) {
             return this.get('game.model.heroPlayer');
         }

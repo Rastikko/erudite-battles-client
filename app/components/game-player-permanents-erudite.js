@@ -10,7 +10,7 @@ export default Component.extend({
 
     classNameBindings: ['isHeroPlayer:hero-player:enemy-player'],
 
-    gamePlayer: computed('isHeroPlayer', 'game.{heroPlayer,enemyPlayer}', function() {
+    gamePlayer: computed('isHeroPlayer', 'game.model.{heroPlayer,enemyPlayer}', function() {
         if (this.get('isHeroPlayer')) {
             return this.get('game.model.heroPlayer');
         }
