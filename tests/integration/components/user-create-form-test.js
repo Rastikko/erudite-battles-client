@@ -1,20 +1,16 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('user-create-form', 'Integration | Component | user create form', {
-  integration: true
-});
+module('Integration | Component | user create form', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function(assert) {
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });
+  test('should render correctly', async function(assert) {
+    assert.expect(1);
 
-  // Template block usage:
-  this.render(hbs`
-    {{#user-create-form}}
-      template block text
-    {{/user-create-form}}
-  `);
+    await render(hbs`{{user-create-form}}`);
 
-  assert.notEqual(this.$().text().trim().length, 0);
+    assert.equal(this.element.querySelector('h2').textContent, 'Create account');
+  });
 });

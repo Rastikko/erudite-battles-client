@@ -11,7 +11,6 @@ export default DS.Model.extend({
     heroPlayer: computed('sessionUserId', 'gamePlayers.[]', function() {
         const userId = parseInt(this.get('sessionUserId'));
         const heroPlayer = this.get('gamePlayers').find(player => player.get('userId') === userId);
-        console.log('heroPlayer!!', heroPlayer);
         return heroPlayer;
     }),
 
